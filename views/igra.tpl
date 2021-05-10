@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-      </head> 
-<body>
+% rebase("pageBase.tpl" , title = "Igrajmo se")
 
   <h1>Vislice</h1>
 
@@ -27,6 +22,3 @@
     <input type="submit" >UGIBAJ!</input>
     % end
   </form>
-</body>
-
-</html>

@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html>
-    <head>
+<head>
         <meta charset="UTF-8">
-      </head> 
+        <title> {{title}} </title>
+</head> 
 <body>
 
-  <h1>Vislice</h1>
+<h1>Vislice</h1>
 
   <blockquote>
     Vislice so najboljša igra za preganjanje dolgčasa (poleg briškule(briškula je lajf)).
   </blockquote>
 
+  <img src="img/10.jpg" alt="obesanje">
 
-  </form>
+  <form action="/igra/" method="GET">
+    <button type="submit">Nova igra</button>
+
+ </form>
 
 {{!base}}
 
