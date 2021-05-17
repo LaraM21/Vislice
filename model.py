@@ -1,4 +1,6 @@
 
+import json
+
 STEVILO_DOVOLJENIH_NAPAK = 10
 PRAVILNA_CRKA = '+'
 PONOVLJENA_CRKA = 'o' 
@@ -6,13 +8,16 @@ NAPACNA_CRKA = '-'
 ZMAGA = 'W'
 PORAZ =  'X'
 ZACETEK = 'A'
+DATOTEKA_S_STANJEM= "podatki.json"
+
 
 class Vislice:
     """
     Krovni objekt, ki upravlja z vsemi igrami (baza vseh iger in kaj dogaja noter)
     """
-    def __init__(self):
-        self.igre = {}
+    def __init__(self,zacetne_igre, datoteka_s_stanjem = DATOTEKA_S_STANJEM):
+        self.igre = zacetne_igre
+        self.datoteka_s_stanjem = datoteka_s_stanjem
 
     def prost_id_igre(self):
         if not self.igre:
@@ -34,6 +39,45 @@ class Vislice:
         self.igre[id_igre] = (igra, novo_stanje)
 
 
+    def dobi_json_slovar(self):
+
+        slovar_iger = {}
+        for id_igre,(igra,stanje) in self.igre.items():
+            slovar_iger[id_igre] = [
+                igra.dobi_json_slovar(),
+                stanje,
+            ]
+
+        return {
+            "igre": slovar_iger,
+            "datoteka_s_stanjem" : self.datoteka_s_stanjem,
+            }
+
+    @staticmethod
+    def preberi_iz_datoteke(ime_datoteke=DATOTEKA_S_STANJEM):
+        with open(ime_datoteke, "r") as in_file:
+            slovar = json.load(in_file) #slovar
+        return Vislice.dobi_vislice_iz_slovarja(slovar)
+
+
+    @staticmethod
+    def dobi_vislice_iz_slovarja(slovar):
+        slovar_iger = {} #slovar objektov - Igra
+        for id_igre, (igra_slovar,stanje) in slovar["igre"].items():
+            slovar_iger[int(id_igre)] = (
+                Igra.dobi_igro_iz_slovarja(igra_slovar),
+                stanje
+            )
+        print(slovar_iger)
+        return Vislice(
+            slovar_iger,
+            slovar["datoteka_s_stanjem"]
+        )
+   
+    def zapisi_v_datoteko(self):
+        slovar = self.dobi_json_slovar()
+        with open(self.datoteka_s_stanjem,"w") as out_file:
+            json.dump(slovar,out_file)
 
 
 
@@ -42,6 +86,19 @@ class Igra:
     def __init__(self, geslo, crke):
         self.geslo = geslo.upper()
         self.crke = crke[:]
+
+    def dobi_json_slovar(self):
+        return{
+        "geslo" : self.geslo,
+        "crke" : self.crke,
+        }
+
+    @staticmethod
+    def dobi_igro_iz_slovarja(slovar):
+        return Igra(
+            slovar["geslo"],slovar.get("crke","")
+        )
+
 
     def napacne_crke(self):
         return [crka for crka in self.crke if crka not in self.geslo]
